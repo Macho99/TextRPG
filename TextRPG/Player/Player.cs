@@ -18,6 +18,7 @@ namespace TextRPG
         public int MaxMP { get; private set; }
 
         public int CurExp { get; private set; }
+        private int totalExp;
         public int Level { get; private set; }
 
         public int Damage { get; private set; }
@@ -25,6 +26,23 @@ namespace TextRPG
 
         private const int MAX_LEVEL = 100;
         private int[] expTable;
+
+        private Player()
+        {
+            CurHP = MaxHP = 100;
+            CurMP = MaxMP = 100;
+            CurExp = 0;
+            totalExp = 0;
+            Level = 1;
+            Damage = 110;
+
+            expTable = new int[MAX_LEVEL];
+            expTable[1] = 10;
+            for (int i = 2; i < MAX_LEVEL; i++)
+            {
+                expTable[i] = (int)(expTable[i - 1] * 1.5f);
+            }
+        }
 
         public void TakeDamage(int damage)
         {
@@ -42,24 +60,27 @@ namespace TextRPG
         }
         public void GainExp(int exp)
         {
-
-        }
-        private Player()
-        {
-            CurHP = MaxHP = 100;
-            CurMP = MaxMP = 100;
-            CurExp = 0;
-            Level = 1;
-            Damage = 10;
-
-            expTable = new int[MAX_LEVEL];
-            expTable[0] = 10;
-            for (int i=1;i<MAX_LEVEL; i++)
+            totalExp += exp;
+            if(exp > 0)
             {
-                expTable[i] = (int)(expTable[i] * 1.5f);
+                Console.WriteLine($"{exp}만큼의 경험치를 얻었습니다");
+            }
+            CurExp = totalExp - expTable[Level - 1];
+            if (expTable[Level] <= totalExp)
+            {
+                Level++;
+                Console.WriteLine($"플레이어의 레벨이 {Level}이 되었습니다!!");
+                GainExp(0);
+            }
+            else
+            {
+                CurExp = totalExp - expTable[Level - 1];
             }
         }
-        
+        public int GetLevelExp()
+        {
+            return expTable[Level + 1] - expTable[Level];
+        }
         public static Player Instance
         {
             get

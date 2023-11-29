@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,6 @@ namespace TextRPG
 {
     public abstract class Scene
     {
-
         public abstract void Init();
         public abstract void Release();
         public abstract void Update();
@@ -79,7 +79,7 @@ namespace TextRPG
             }
             return dir;
         }
-        protected void PrintMap(int[,] map)
+        protected void PrintMap(in int[,] map)
         {
             Console.Clear();
             StringBuilder sb = new StringBuilder();
@@ -99,6 +99,22 @@ namespace TextRPG
             Console.CursorVisible = false;
             Console.SetCursorPosition(pos.x * 2, pos.y);
             Console.Write(icon);
+        }
+        protected void PrintPlayerStat(int xPos, int yPos = 5)
+        {
+            Console.CursorVisible = false;
+            Player p = Player.Instance;
+            Console.SetCursorPosition(xPos, yPos++);
+            Console.Write($"플레이어:   {p.Level} 레벨");
+            Console.SetCursorPosition(xPos, yPos++);
+            Console.Write($"체력: {p.CurHP} / {p.MaxHP}");
+            Console.SetCursorPosition(xPos, yPos++);
+            Console.Write($"마나: {p.CurMP} / {p.MaxMP}");
+            Console.SetCursorPosition(xPos, yPos++);
+            Console.Write($"공격력: {p.Damage}");
+            Console.SetCursorPosition(xPos, yPos++);
+            Console.Write($"경험치: {p.CurExp} / {p.GetLevelExp()}");
+            Console.WriteLine();
         }
     }
 }

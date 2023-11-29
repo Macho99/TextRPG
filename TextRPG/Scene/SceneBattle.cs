@@ -43,16 +43,13 @@ namespace TextRPG
             Console.Clear();
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("============전투 중============\n");
-            sb.AppendLine($"{monster.Name}:         {monster.Level} 레벨");
+            sb.AppendLine($"{monster.Name}:   {monster.Level} 레벨");
             sb.AppendLine($"체력: {monster.CurHP} / {monster.MaxHP}");
             sb.AppendLine($"마나: {monster.CurMP} / {monster.MaxMP}");
             sb.AppendLine($"공격력: {monster.Damage}");
-            sb.AppendLine($"\n플레이어:              {player.Level} 레벨");
-            sb.AppendLine($"체력: {player.CurHP} / {player.MaxHP}");
-            sb.AppendLine($"마나: {player.CurMP} / {player.MaxMP}");
-            sb.AppendLine($"공격력: {player.Damage}\n");
 
             Console.WriteLine(sb.ToString());
+            PrintPlayerStat(20, 2);
         }
 
         public override void Update()
@@ -91,6 +88,7 @@ namespace TextRPG
 
             if(monster.CurHP <= 0)
             {
+                player.GainExp(monster.Reward);
                 Core.Instance.SceneChange(GroupScene.Prev);
             }
         }
