@@ -8,6 +8,15 @@ namespace TextRPG
 {
     public class SceneGameOver : Scene
     {
+        public override void Init()
+        {
+            playerPos = null;
+        }
+
+        public override void Release()
+        {
+
+        }
         public override void Enter()
         {
 
@@ -18,15 +27,6 @@ namespace TextRPG
 
         }
 
-        public override void Init()
-        {
-
-        }
-
-        public override void Release()
-        {
-
-        }
 
         public override void Render()
         {

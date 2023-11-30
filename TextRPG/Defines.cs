@@ -6,34 +6,12 @@ using System.Threading.Tasks;
 
 namespace TextRPG
 {
-    public struct Position
+    public enum ItemID
     {
-        public int x;
-        public int y;
-        public Position(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-        public static bool operator==(Position left, Position right)
-        {
-            if(left.y == right.y)
-            {
-                if(left.x == right.x)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        public static bool operator!=(Position left, Position right)
-        {
-            if(left == right)
-            {
-                return false;
-            }
-            return true;
-        }
+        RED_POTION,
+        SLIME_MUCUS,
+        LETHER_GLOVE,
+        LONG_SWORD
     }
     public enum Direction
     {
@@ -42,6 +20,6 @@ namespace TextRPG
 
     public enum GroupScene
     {
-        Title, Map, Battle, GameOver, Prev, Size
+        Title, Map, Battle, Inventory, GameOver, Prev, Size
     };
 }

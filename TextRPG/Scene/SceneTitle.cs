@@ -8,6 +8,15 @@ namespace TextRPG
 {
     public class SceneTitle : Scene
     {
+        public override void Init()
+        {
+            playerPos = null;
+        }
+
+        public override void Release()
+        {
+
+        }
         public override void Enter()
         {
 
@@ -18,15 +27,6 @@ namespace TextRPG
 
         }
 
-        public override void Init()
-        {
-
-        }
-
-        public override void Release()
-        {
-
-        }
 
         public override void Render()
         {
@@ -47,6 +47,7 @@ namespace TextRPG
                     Core.Instance.SceneChange(GroupScene.Map);
                     break;
                 case 2:
+                    Core.Instance.SceneChange(GroupScene.GameOver);
                     break;
             }
         }

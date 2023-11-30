@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,12 +11,17 @@ namespace TextRPG
 {
     public abstract class Scene
     {
+        protected Player playerPos;
         public abstract void Init();
         public abstract void Release();
         public abstract void Update();
         public abstract void Render();
         public abstract void Enter();
         public abstract void Exit();
+        public Player GetPlayer()
+        {
+            return playerPos;
+        }
         protected int InputInt(int min, int max, in string msg = null)
         {
             while (true)
@@ -32,7 +38,7 @@ namespace TextRPG
                     Console.WriteLine($"올바른 숫자로 입력해주세요");
                     continue;
                 }
-                if (command < min && command > max)
+                if (command < min || command > max)
                 {
                     Console.WriteLine($"{min} ~ {max}사이로 입력해주세요");
                     continue;
@@ -51,9 +57,8 @@ namespace TextRPG
         {
             throw new NotImplementedException();
         }
-        protected Direction InputDirection()
+        protected Direction KeyToDirection(ConsoleKeyInfo keyInfo)
         {
-            ConsoleKeyInfo keyInfo = Console.ReadKey();
             Direction dir;
             switch (keyInfo.Key)
             {
@@ -79,7 +84,7 @@ namespace TextRPG
             }
             return dir;
         }
-        protected void PrintMap(in int[,] map)
+        public void PrintMap(in int[,] map)
         {
             Console.Clear();
             StringBuilder sb = new StringBuilder();
@@ -94,16 +99,28 @@ namespace TextRPG
             sb.AppendLine();
             Console.WriteLine(sb.ToString());
         }
-        protected void PrintObject(Position pos, char icon)
+        //public void PrintDebugMap(in int[,] map, List<Point> path)
+        //{
+        //    PrintMap(map);
+        //    Console.CursorVisible = false;
+        //    for(int i = 0; i < path.Count; i++)
+        //    {
+        //        PrintObject(path[i], i);
+        //    }
+        //}
+        protected void PrintObject<T>(Point pos, T obj)
         {
             Console.CursorVisible = false;
+            (int, int) prevCursor = Console.GetCursorPosition();
             Console.SetCursorPosition(pos.x * 2, pos.y);
-            Console.Write(icon);
+            Console.Write(obj);
+            Console.SetCursorPosition(prevCursor.Item1, prevCursor.Item2);
         }
         protected void PrintPlayerStat(int xPos, int yPos = 5)
         {
+            (int,int) prevCursor = Console.GetCursorPosition();
             Console.CursorVisible = false;
-            Player p = Player.Instance;
+            PlayerStat p = PlayerStat.Instance;
             Console.SetCursorPosition(xPos, yPos++);
             Console.Write($"플레이어:   {p.Level} 레벨");
             Console.SetCursorPosition(xPos, yPos++);
@@ -113,8 +130,12 @@ namespace TextRPG
             Console.SetCursorPosition(xPos, yPos++);
             Console.Write($"공격력: {p.Damage}");
             Console.SetCursorPosition(xPos, yPos++);
+            Console.Write($"방어력: {p.Defence}");
+            Console.SetCursorPosition(xPos, yPos++);
             Console.Write($"경험치: {p.CurExp} / {p.GetLevelExp()}");
             Console.WriteLine();
+
+            Console.SetCursorPosition(prevCursor.Item1, prevCursor.Item2);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace TextRPG
 {
@@ -13,6 +14,7 @@ namespace TextRPG
 
         Scene curScene;
         Dictionary<GroupScene, Scene> sceneDict;
+        Stack<Scene> sceneStack;
 
         private Core() { }
         public static Core Instance
@@ -40,11 +42,13 @@ namespace TextRPG
         {
             running = true;
 
+            sceneStack = new Stack<Scene>();
             sceneDict = new Dictionary<GroupScene, Scene>
             {
                 { GroupScene.Title, new SceneTitle() },
                 { GroupScene.Map, new SceneMap() },
                 { GroupScene.Battle, new SceneBattle() },
+                { GroupScene.Inventory, new SceneInventory() },
                 { GroupScene.GameOver, new SceneGameOver() },
             };
 
@@ -76,11 +80,27 @@ namespace TextRPG
         }
         public void SceneChange(GroupScene scene)
         {
+            if(scene == GroupScene.Battle || scene == GroupScene.Inventory)
+            {
+                sceneStack.Push(curScene);
+            }
             curScene.Exit();
-            Scene tmp = curScene;
-            curScene = sceneDict[scene];
-            sceneDict[GroupScene.Prev] = tmp;
+            if(scene == GroupScene.Prev)
+            {
+                if(sceneStack.Count < 0) {
+                    throw new Exception();
+                }
+                curScene = sceneStack.Pop();
+            }
+            else
+            {
+                curScene = sceneDict[scene];
+            }
             curScene.Enter();
+        }
+        public Scene GetCurScene()
+        {
+            return curScene;
         }
         public void GameOver()
         {

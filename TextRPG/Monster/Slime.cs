@@ -9,11 +9,25 @@ namespace TextRPG
     public class Slime : Monster
     {
         private char icon = 'S';
-        private int turnCnt = 0;
-        private const int moveTurn = 3;
+        private int moveCnt = 0;
+        private const int movePeriod = 3;
+        private static List<(ItemID, float)> dropTable;
         //매 업데이트마다 랜덤 방향으로 이동
-        private Random random;
-        public Slime(int y, int x) : base(new Position(y,x), "슬라임", 20, 10, 1, 5, 100)
+        static Slime()
+        {
+            dropTable = new List<(ItemID, float)>();
+            dropTable.Add((ItemID.LETHER_GLOVE, 0.5f));
+            dropTable.Add((ItemID.RED_POTION, 0.5f));
+            dropTable.Add((ItemID.RED_POTION, 0.5f));
+            dropTable.Add((ItemID.SLIME_MUCUS, 0.5f));
+            dropTable.Add((ItemID.SLIME_MUCUS, 0.5f));
+            dropTable.Add((ItemID.SLIME_MUCUS, 0.5f));
+        }
+        protected override List<(ItemID, float)> getDropTable()
+        {
+            return dropTable;
+        }
+        public Slime(int y, int x) : base(new Point(y,x), "슬라임", 20, 10, 1, 5, 50, 100)
         {
             random = new Random();
         }
@@ -23,12 +37,12 @@ namespace TextRPG
         }
         public override void MoveAction(int[,] map)
         {
-            turnCnt += random.Next(0, 2);
-            if(turnCnt < moveTurn)
+            moveCnt += random.Next(0, 2);
+            if(moveCnt < movePeriod)
             {
                 return;
             }
-            turnCnt -= moveTurn;
+            moveCnt -= movePeriod;
             int randNum = random.Next(0, (int)Direction.None);
             Direction dir = (Direction)randNum;
             Move(dir, map);

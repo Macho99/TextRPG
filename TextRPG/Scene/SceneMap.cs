@@ -30,10 +30,25 @@ namespace TextRPG
             {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
             {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
         };
-        PlayerPos playerPos;
-        Player player;
+        PlayerStat player;
         List<Monster> monsters = new List<Monster>();
 
+        public override void Init()
+        {
+            playerPos = new Player();
+            playerPos.pos.x = 1;
+            playerPos.pos.y = 1;
+            player = PlayerStat.Instance;
+            monsters.Add(new Slime(7, 7));
+            monsters.Add(new Slime(5, 4));
+            monsters.Add(new Slime(5, 7));
+            monsters.Add(new Hunter(15, 15));
+        }
+
+        public override void Release()
+        {
+
+        }
         public override void Enter()
         {
             foreach (Monster monster in monsters)
@@ -51,21 +66,6 @@ namespace TextRPG
 
         }
 
-        public override void Init()
-        {
-            playerPos = new PlayerPos();
-            playerPos.pos.x = 1;
-            playerPos.pos.y = 1;
-            player = Player.Instance;
-            monsters.Add(new Slime(7, 7));
-            monsters.Add(new Slime(5, 4));
-            monsters.Add(new Slime(5, 7));
-        }
-
-        public override void Release()
-        {
-
-        }
 
         public override void Render()
         {
@@ -86,16 +86,24 @@ namespace TextRPG
 
         public override void Update()
         {
-            Direction dir = InputDirection();
+            ConsoleKeyInfo keyInfo = Console.ReadKey();
+            if(keyInfo.Key == ConsoleKey.I)
+            {
+                Core.Instance.SceneChange(GroupScene.Inventory);
+                return;
+            }
+
+            Direction dir = KeyToDirection(keyInfo);
             playerPos.Move(dir, map);
             foreach(Monster monster in monsters)
             {
-                monster.MoveAction(map);
-                if(monster.pos == playerPos.pos)
+                if (monster.pos == playerPos.pos)
                 {
                     player.Target = monster;
                     Core.Instance.SceneChange(GroupScene.Battle);
+                    return;
                 }
+                monster.MoveAction(map);
             }
         }
     }

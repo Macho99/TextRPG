@@ -10,11 +10,12 @@ namespace TextRPG
     {
         private Random random;
         private Monster monster;
-        private Player player;
+        private PlayerStat player;
         public override void Init()
         { 
             random = new Random();
-            player = Player.Instance;
+            player = PlayerStat.Instance;
+            playerPos = null;
             monster = null;
         }
 
@@ -28,13 +29,11 @@ namespace TextRPG
             monster = player.Target;
             Console.Clear();
             Console.WriteLine($"{monster.Name}와 전투를 개시합니다!!");
-            Thread.Sleep( 1500 );
+            Thread.Sleep( 800 );
         }
 
         public override void Exit()
         {
-            Console.WriteLine("전투를 종료합니다");
-            Thread.Sleep(1500);
         }
 
 
@@ -59,7 +58,8 @@ namespace TextRPG
             sb.AppendLine("1. 공격");
             sb.AppendLine("2. 방어");
             sb.AppendLine("3. 도망가기");
-            int command = InputInt(1, 3, sb.ToString());
+            sb.AppendLine("4. 인벤토리 열기");
+            int command = InputInt(1, 4, sb.ToString());
 
             Action action;
             switch(command)
@@ -73,24 +73,43 @@ namespace TextRPG
                 case 3:
                     action = CommandRun;
                     break;
+                case 4:
+                    action = CommandInven;
+                    break;
                 default:
                     action = CommandRun;
                     break;
             }
             action();
-            InputKey("아무 키나 입력하세요.");
         }
         private void CommandAttack()
         {
             Console.WriteLine("공격 개시!!");
-            monster.TakeDamage(player.Damage);
             player.TakeDamage(monster.Damage);
+            monster.TakeDamage(player.Damage);
 
             if(monster.CurHP <= 0)
             {
-                player.GainExp(monster.Reward);
-                Core.Instance.SceneChange(GroupScene.Prev);
+                GetReward();
             }
+            Thread.Sleep(1000);
+        }
+        private void GetReward()
+        {
+            Console.Clear();
+            Console.WriteLine("승리했습니다!!");
+            player.GainExp(monster.Reward);
+
+            List<Item> items = monster.DropItem();
+            Inventory.Instance.AddItem(items);
+
+            foreach(Item item in items)
+            {
+                Console.WriteLine($"획득! {item.Name}");
+                Thread.Sleep(200);
+            }
+            Thread.Sleep(1000);
+            Core.Instance.SceneChange(GroupScene.Prev);
         }
         private void CommandDefence()
         {
@@ -102,11 +121,17 @@ namespace TextRPG
             if (randNum < 5 && monster.Level > player.Level)
             {
                 Console.WriteLine("도망에 실패하였습니다..");
+                Thread.Sleep(1000);
                 return;
             }
 
             Console.WriteLine("도망에 성공하였습니다!");
             Core.Instance.SceneChange(GroupScene.Prev);
+            Thread.Sleep(1000);
+        }
+        private void CommandInven()
+        {
+            Core.Instance.SceneChange(GroupScene.Inventory);
         }
     }
 }
