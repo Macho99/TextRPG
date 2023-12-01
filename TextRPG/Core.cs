@@ -33,6 +33,7 @@ namespace TextRPG
             Init();
             while (running)
             {
+                EventManager.Instance.Update();
                 Render();
                 Update();
             }
@@ -42,11 +43,15 @@ namespace TextRPG
         {
             running = true;
 
+            EventManager.Instance.Init();
+
+            // TODO: 씬 추가
             sceneStack = new Stack<Scene>();
             sceneDict = new Dictionary<GroupScene, Scene>
             {
                 { GroupScene.Title, new SceneTitle() },
-                { GroupScene.Map, new SceneMap() },
+                { GroupScene.Map1, new SceneMap1() },
+                { GroupScene.Map2, new SceneMap2() },
                 { GroupScene.Battle, new SceneBattle() },
                 { GroupScene.Inventory, new SceneInventory() },
                 { GroupScene.GameOver, new SceneGameOver() },
@@ -64,9 +69,13 @@ namespace TextRPG
         }
         private void Release()
         {
+            EventManager.Instance.Release();
             foreach(Scene scene in sceneDict.Values)
             {
-                scene.Release();
+                if(scene != null)
+                {
+                    scene.Release();
+                }
             }
             sceneDict.Clear();
             curScene = null;

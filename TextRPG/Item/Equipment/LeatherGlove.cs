@@ -11,30 +11,21 @@ namespace TextRPG
         public LeatherGlove()
             : base(ItemID.LETHER_GLOVE) { }
 
-        public override bool Equip()
-        {
-            if (base.Equip())
-            {
-                Console.WriteLine("방어력이 10 증가했다");
-                PlayerStat.Instance.AddDefence(10);
-                return true;
-            }
-            else { return false; }
-        }
-        public override bool UnEquip()
-        {
-            if (base.UnEquip())
-            {
-                Console.WriteLine("방어력이 원래대로 돌아갔다");
-                PlayerStat.Instance.MinusDefence(10);
-                return true;
-            }
-            else
-                return false;
-        }
         public override LeatherGlove Clone()
         {
             return new LeatherGlove();
+        }
+
+        protected override void EquipEffect()
+        {
+            Console.WriteLine("방어력이 10 증가했다");
+            PlayerStat.Instance.AddDefence(10);
+        }
+
+        protected override void UnEquipEffect()
+        {
+            Console.WriteLine("방어력이 원래대로 돌아갔다");
+            PlayerStat.Instance.MinusDefence(10);
         }
     }
 }

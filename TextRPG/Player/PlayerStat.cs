@@ -35,7 +35,7 @@ namespace TextRPG
             CurExp = 0;
             totalExp = 0;
             Level = 1;
-            Damage = 110;
+            Damage = 10;
 
             expTable = new int[MAX_LEVEL];
             expTable[1] = 10;
@@ -54,10 +54,7 @@ namespace TextRPG
             if (CurHP <= 0)
             {
                 CurHP = 0;
-                Console.WriteLine("플레이어가 쓰러집니다....");
-                Thread.Sleep(2000);
-                Core.Instance.SceneChange(GroupScene.GameOver);
-                return;
+                Console.WriteLine("플레이어가 쓰러집니다...");
             }
         }
         public void AddDamage(int amount)

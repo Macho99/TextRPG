@@ -19,8 +19,10 @@ namespace TextRPG
         {
             inventory = null;
         }
+
         public override void Enter()
         {
+            Console.Clear();
             Console.WriteLine("인벤토리로 진입합니다..");
             Thread.Sleep(500);
         }
@@ -53,12 +55,13 @@ namespace TextRPG
                     UseItem();
                     break;
                 case 2:
+                    inventory.SortName();
                     break;
                 case 3:
                     inventory.SortType();
                     break;
                 case 4:
-                    Core.Instance.SceneChange(GroupScene.Prev);
+                    EventManager.Instance.ReserveChangeScene(GroupScene.Prev);
                     break;
             }
         }

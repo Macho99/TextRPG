@@ -51,7 +51,7 @@ namespace TextRPG
         {
             if(msg != null)
                 Console.WriteLine(msg);
-            return Console.ReadKey();
+            return Console.ReadKey(true);
         }
         protected string InputString()
         {
@@ -83,21 +83,6 @@ namespace TextRPG
                     break;
             }
             return dir;
-        }
-        public void PrintMap(in int[,] map)
-        {
-            Console.Clear();
-            StringBuilder sb = new StringBuilder();
-            for(int i =0;i<map.GetLength(0);i++)
-            {
-                for(int j=0;j<map.GetLength(1);j++)
-                {
-                    sb.Append(Data.Instance.mapCharArr[map[i,j]]).Append(' ');
-                }
-                sb.AppendLine();
-            }
-            sb.AppendLine();
-            Console.WriteLine(sb.ToString());
         }
         //public void PrintDebugMap(in int[,] map, List<Point> path)
         //{

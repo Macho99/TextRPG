@@ -21,6 +21,7 @@ namespace TextRPG
             if (!IsEquip)
             {
                 Console.WriteLine("{0}을 착용합니다.", Name);
+                EquipEffect();
                 IsEquip = true;
                 return true;
             }
@@ -37,6 +38,7 @@ namespace TextRPG
             if (IsEquip)
             {
                 Console.WriteLine("{0}을 착용해제합니다.", Name);
+                UnEquipEffect();
                 IsEquip = false;
                 return true;
             }
@@ -46,5 +48,7 @@ namespace TextRPG
                 return false;
             }
         }
+        protected abstract void EquipEffect();
+        protected abstract void UnEquipEffect();
     }
 }

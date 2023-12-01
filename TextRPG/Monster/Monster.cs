@@ -54,12 +54,12 @@ namespace TextRPG
             damage = (int)(damage * (100 / (float) (100 + Defence))); //롤 방어력 공식 적용
             CurHP -= damage;
 
-            Console.WriteLine($"{Name}이 {damage}의 피해를 받습니다");
+            Console.WriteLine($"{Name}이(가) {damage}의 피해를 받습니다");
             Thread.Sleep(1000);
             if (CurHP <= 0)
             {
                 CurHP = 0;
-                Console.WriteLine($"{Name}이 쓰러집니다");
+                Console.WriteLine($"{Name}이(가) 쓰러집니다");
             }
         }
         public abstract char GetIcon();

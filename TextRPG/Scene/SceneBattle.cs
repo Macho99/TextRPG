@@ -56,7 +56,7 @@ namespace TextRPG
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("선택하세요!!\n");
             sb.AppendLine("1. 공격");
-            sb.AppendLine("2. 방어");
+            sb.AppendLine("2. 반격기");
             sb.AppendLine("3. 도망가기");
             sb.AppendLine("4. 인벤토리 열기");
             int command = InputInt(1, 4, sb.ToString());
@@ -68,7 +68,7 @@ namespace TextRPG
                     action = CommandAttack;
                     break;
                 case 2:
-                    action = CommandDefence;
+                    action = CommandCounterAttack;
                     break;
                 case 3:
                     action = CommandRun;
@@ -82,17 +82,122 @@ namespace TextRPG
             }
             action();
         }
-        private void CommandAttack()
+        private void Attack(int playerDamage, int monsterDamage)
         {
-            Console.WriteLine("공격 개시!!");
-            player.TakeDamage(monster.Damage);
-            monster.TakeDamage(player.Damage);
+            if(monsterDamage > 0)
+            {
+                player.TakeDamage(monsterDamage);
+            }
+            if(playerDamage > 0)
+            {
+                monster.TakeDamage(playerDamage);
+            }
 
-            if(monster.CurHP <= 0)
+            Thread.Sleep(2000);
+            if(player.CurHP <= 0)
+            {
+                Thread.Sleep(2000);
+                EventManager.Instance.ReserveChangeScene(GroupScene.GameOver);
+                return;
+            }
+            else if (monster.CurHP <= 0)
             {
                 GetReward();
             }
-            Thread.Sleep(1000);
+        }
+        private int AttackRoulette()
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Console.WriteLine("공격의 강도를 결정합니다!! 아무키나 누르세요");
+
+            int count = 1;
+            // 룰렛 돌리는 작업을 시작합니다.
+            Task spinningTask = Task.Run(async () =>
+            {
+                while (!cts.Token.IsCancellationRequested)
+                {
+                    Console.Write("■■■■");
+                    await Task.Delay(50); // 0.05초마다 증가
+                    count += random.Next(1,3);
+                    if(count > 10)
+                    {
+                        count = 1;
+                        Console.Write($"\r                                        \r");
+                    }
+                }
+            });
+
+            // 아무 키를 누를 때까지 대기합니다.
+            Console.ReadKey(true);
+            cts.Cancel(); // 룰렛 돌리는 작업을 취소합니다.
+            Console.WriteLine($"\n공격이 {count}만큼 강해집니다!");
+            Thread.Sleep(200);
+            return count;
+        }
+        private void CommandAttack()
+        {
+            Console.WriteLine("공격 개시!");
+            int spin = AttackRoulette();
+            Attack(player.Damage + spin, monster.Damage);
+        }
+        private void CommandCounterAttack()
+        {
+            Console.WriteLine("반격기 사용!");
+            bool result = CounterAttackRoulette();
+            if(result)
+            {
+                Console.WriteLine($"{monster.Name}에게 더 강한 공격을 선사합니다!");
+                Attack(player.Damage * 2, 0);
+            }
+            else
+            {
+                Console.WriteLine($"{monster.Name}에게 빈틈을 보였습니다.");
+                Attack(0, monster.Damage * 2);
+            }
+        }
+        private bool CounterAttackRoulette()
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Console.WriteLine("화면에 마름모가 가득 찼을 때 아무키나 누르세요!!");
+
+            int count = random.Next(1, 19);
+            int threshold = 5;
+            // 룰렛 돌리는 작업을 시작합니다.
+            Task spinningTask = Task.Run(async () =>
+            {
+                while (!cts.Token.IsCancellationRequested)
+                {
+                    await Task.Delay(100); // 0.1초마다 증가
+                    count += random.Next(1, 4);
+                    if (count <= threshold)
+                    {
+                        Console.Write("\r■■■■■■■■■■■■■■");
+                    }
+                    else if (count < 20)
+                    {
+                        Console.Write("\r◇◇◇◇◇◇◇◇◇◇◇◇◇◇");
+                    }
+                    else {
+                        count = 1;
+                    }
+                }
+            });
+            // 아무 키를 누를 때까지 대기합니다.
+            Console.ReadKey(true);
+            cts.Cancel(); // 룰렛 돌리는 작업을 취소합니다.\
+            Thread.Sleep(100);
+            if(count <= threshold)
+            {
+                Console.Write("\r■■■■■■■■■■■■■■");
+                Console.WriteLine("\n반격에 성공했습니다!!");
+                return true;
+            }
+            else
+            {
+                Console.Write("\r◇◇◇◇◇◇◇◇◇◇◇◇◇◇");
+                Console.WriteLine("\n반격에 실패했습니다....");
+                return false;
+            }
         }
         private void GetReward()
         {
@@ -109,29 +214,26 @@ namespace TextRPG
                 Thread.Sleep(200);
             }
             Thread.Sleep(1000);
-            Core.Instance.SceneChange(GroupScene.Prev);
-        }
-        private void CommandDefence()
-        {
-
+            EventManager.Instance.ReserveChangeScene(GroupScene.Prev);
         }
         private void CommandRun()
         {
             int randNum = random.Next(0, 10);
-            if (randNum < 5 && monster.Level > player.Level)
+            if (randNum < 9 && monster.Level > player.Level)
             {
                 Console.WriteLine("도망에 실패하였습니다..");
+                Attack(0, monster.Damage);
                 Thread.Sleep(1000);
                 return;
             }
 
             Console.WriteLine("도망에 성공하였습니다!");
-            Core.Instance.SceneChange(GroupScene.Prev);
+            EventManager.Instance.ReserveChangeScene(GroupScene.Prev);
             Thread.Sleep(1000);
         }
         private void CommandInven()
         {
-            Core.Instance.SceneChange(GroupScene.Inventory);
+            EventManager.Instance.ReserveChangeScene(GroupScene.Inventory);
         }
     }
 }

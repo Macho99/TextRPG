@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TextRPG
 {
-    public abstract class Item : IComparable<Item>, IComparer<Item>
+    public abstract class Item : IComparable<Item>
     {
         private ItemID id;
         protected Item(ItemID id)
@@ -18,20 +18,17 @@ namespace TextRPG
         public string Desc { get { return Data.Instance.dictItemDesc[id]; } }
         public abstract Item Clone();
 
-        public int Compare(Item? x, Item? y)
+        public int CompareTo(Item? other)
         {
-            if(x.id < y.id)
+            if (id < other.id)
             {
                 return 1;
             }
+            else if (id > other.id)
+            {
+                return -1;
+            }
             return 0;
-        }
-
-        public int CompareTo(Item? other)
-        {
-            if (id == other?.id)
-                return 0;
-            return 1;
         }
     }
 }

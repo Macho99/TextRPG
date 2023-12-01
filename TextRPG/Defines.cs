@@ -20,6 +20,6 @@ namespace TextRPG
 
     public enum GroupScene
     {
-        Title, Map, Battle, Inventory, GameOver, Prev, Size
+        Title, Map1, Map2, Battle, Inventory, GameOver, Prev, Size
     };
 }

@@ -15,8 +15,13 @@ namespace TextRPG
             items = new List<Item>();
             AddItem(Data.Instance.dictItem[ItemID.RED_POTION].Clone());
             AddItem(Data.Instance.dictItem[ItemID.RED_POTION].Clone());
+            AddItem(Data.Instance.dictItem[ItemID.LONG_SWORD].Clone());
             AddItem(Data.Instance.dictItem[ItemID.RED_POTION].Clone());
-            AddItem(Data.Instance.dictItem[ItemID.RED_POTION].Clone());
+            AddItem(Data.Instance.dictItem[ItemID.SLIME_MUCUS].Clone());
+            AddItem(Data.Instance.dictItem[ItemID.LETHER_GLOVE].Clone());
+            AddItem(Data.Instance.dictItem[ItemID.LETHER_GLOVE].Clone());
+            AddItem(Data.Instance.dictItem[ItemID.LONG_SWORD].Clone());
+            AddItem(Data.Instance.dictItem[ItemID.SLIME_MUCUS].Clone());
         }
         public static Inventory Instance
         {
@@ -62,23 +67,26 @@ namespace TextRPG
         }
         public void PrintItems()
         {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("=========================================");
             for (int i = 0; i < items.Count; i++)
             {
-                Console.Write("{0}. {1}", i + 1, items[i].Name);
+                sb.Append($"|  {i + 1}. {items[i].Name}");
                 if (items[i] is IMultiple multi)
                 {
-                    Console.Write(": {0}", multi.GetQuantity());
+                    sb.Append($": {multi.GetQuantity()}");
                 }
                 else if (items[i] is Equipment equipment)
                 {
                     if (equipment.IsEquip)
                     {
-                        Console.Write("(착용중)");
+                        sb.Append("(착용중)");
                     }
                 }
-                Console.Write("\n{0}\n", items[i].Desc);
-                Console.WriteLine();
+                sb.Append($"\n|    :{items[i].Desc}\n");
             }
+            sb.AppendLine("=========================================");
+            Console.WriteLine(sb.ToString());
         }
         private Item? FindItem(ItemID id)
         {
@@ -154,6 +162,19 @@ namespace TextRPG
         public void SortType()
         {
             items.Sort();
+        }
+        public void SortName()
+        {
+            PriorityQueue<Item, string> pq =  new PriorityQueue<Item, string>();
+            foreach( var item in items)
+            {
+                pq.Enqueue(item, item.Name );
+            }
+            items.Clear();
+            while( pq.Count > 0 )
+            {
+                items.Add(pq.Dequeue());
+            }
         }
         public int ItemCount()
         {

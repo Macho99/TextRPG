@@ -10,10 +10,13 @@ namespace TextRPG
     {
         public char[] mapCharArr = new char[]
         {
-            //0
+            //0 빈공간
             ' ',
-            //1
-            '■'
+            //1 벽
+            '■',
+            //2 포탈
+            '※'
+
         };
         public Dictionary<ItemID, string> dictItemName, dictItemDesc;
         public Dictionary<ItemID, Item> dictItem;

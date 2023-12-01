@@ -163,6 +163,7 @@ namespace TextRPG
                 if (a.x == b.x)
                     return true;
             }
+
             return false;
         }
         public static Point operator +(Point a, Point b)

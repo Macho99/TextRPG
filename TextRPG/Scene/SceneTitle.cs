@@ -44,10 +44,10 @@ namespace TextRPG
             switch (input)
             {
                 case 1:
-                    Core.Instance.SceneChange(GroupScene.Map);
+                    EventManager.Instance.ReserveChangeScene(GroupScene.Map1);
                     break;
                 case 2:
-                    Core.Instance.SceneChange(GroupScene.GameOver);
+                    EventManager.Instance.ReserveChangeScene(GroupScene.GameOver);
                     break;
             }
         }
