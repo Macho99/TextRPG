@@ -48,6 +48,9 @@ namespace TextRPG
 
         protected override void GoNextScene()
         {
+            Console.Clear();
+            Console.WriteLine("The End");
+            Thread.Sleep(2000);
             EventManager.Instance.ReserveChangeScene(GroupScene.GameOver);
         }
 

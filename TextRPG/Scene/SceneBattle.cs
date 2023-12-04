@@ -184,7 +184,7 @@ namespace TextRPG
             });
             // 아무 키를 누를 때까지 대기합니다.
             Console.ReadKey(true);
-            cts.Cancel(); // 룰렛 돌리는 작업을 취소합니다.\
+            cts.Cancel(); // 룰렛 돌리는 작업을 취소합니다.
             Thread.Sleep(100);
             if(count <= threshold)
             {

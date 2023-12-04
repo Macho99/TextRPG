@@ -49,14 +49,14 @@ namespace TextRPG
             {
                 path = new List<Point>();
                 AStar.PathFinding(map, pos, playerPos, out path);
-               // Core.Instance.GetCurScene().PrintDebugMap(map, path);
+                //Core.Instance.GetCurScene().PrintDebugMap(map, path);
                 if (path == null)
                 {
                     return;
                 }
                 else
                 {
-                    targetIdx = path.Count / 2 + 1;
+                    targetIdx = path.Count / 3 + 2;
                     moveIdx = 0;
                 }
             }
